@@ -1,11 +1,14 @@
 package com.ecommerce.project.services;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.ecommerce.project.dto.CategoryDTO;
 import com.ecommerce.project.entities.Category;
 import com.ecommerce.project.repositories.CategoryRepository;
 
@@ -15,11 +18,10 @@ public class CategoryService {
 	@Autowired
 	private CategoryRepository repository;
 	
-	public List<Category> findAll(){
-		return repository.findAll();
+	@Transactional(readOnly = true)
+	public List<CategoryDTO> findAll(){
+		List<Category> list = repository.findAll();		
+		return list.stream().map(x -> new CategoryDTO(x)).collect(Collectors.toList());		
 	}
 	
-	public Optional<Category> findById(long id) {
-		return repository.findById(id);
-	}
 }
