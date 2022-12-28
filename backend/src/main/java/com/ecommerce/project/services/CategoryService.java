@@ -3,6 +3,8 @@ package com.ecommerce.project.services;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -11,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ecommerce.project.dto.CategoryDTO;
 import com.ecommerce.project.entities.Category;
 import com.ecommerce.project.repositories.CategoryRepository;
+import com.ecommerce.project.services.exceptions.DatabaseException;
 import com.ecommerce.project.services.exceptions.ResourceNotFoundException;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -54,6 +57,19 @@ public class CategoryService {
 		}
 		catch(EntityNotFoundException e){
 			throw new ResourceNotFoundException("Id " + id + " not found");
+		}
+			
+	}
+
+	public void delete(Long id) {
+		try {
+			repository.deleteById(id);	
+		}
+		catch(EmptyResultDataAccessException e) {
+			throw new ResourceNotFoundException("Id " + id + " not found");
+		}
+		catch(DataIntegrityViolationException e) {
+			throw new DatabaseException("Integrity violation");
 		}
 			
 	}
